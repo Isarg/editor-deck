@@ -43,6 +43,16 @@ intellijPlatform {
     // slow down local verification noticeably.
     buildSearchableOptions = false
 
+    signing {
+        certificateChain.set(providers.environmentVariable("CERTIFICATE_CHAIN"))
+        privateKey.set(providers.environmentVariable("PRIVATE_KEY"))
+        password.set(providers.environmentVariable("PRIVATE_KEY_PASSWORD"))
+    }
+
+    publishing {
+        token.set(providers.environmentVariable("PUBLISH_TOKEN"))
+    }
+
     pluginConfiguration {
         name = "Editor Deck"
 
@@ -58,6 +68,7 @@ intellijPlatform {
             <ul>
               <li>Migrate Editor Deck into the IntelliJ Platform Plugin Template project structure.</li>
               <li>Add Editor Deck tool window with open editor grouping, pinning, drag sorting, and Maven/Gradle POM lookup.</li>
+              <li>Add signing and publishing configuration for release builds.</li>
             </ul>
         """.trimIndent()
     }

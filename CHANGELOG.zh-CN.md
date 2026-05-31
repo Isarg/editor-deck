@@ -5,6 +5,13 @@
 [English](CHANGELOG.md)
 
 ## [Unreleased]
+
+## [0.1.1] - 2026-05-31
+### Changed
+- 新增 IntelliJ Platform 插件签名和发布配置，用于生成已签名的发布包。
+- 合并 Kotlin Gradle 插件 2.3.21 更新后重新构建发布版本。
+
+## [0.1.0] - 2026-05-31
 ### Added
 - 将 Editor Deck MVP 迁移到 IntelliJ Platform Plugin Template 工程结构。
 - 新增 Editor Deck 工具窗口，支持打开编辑器的分组导航。
