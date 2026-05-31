@@ -3,6 +3,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -82,6 +83,7 @@ tasks.test {
 
 val signingPrivateKeyFile = layout.buildDirectory.file("tmp/signing/private-key.pem")
 val signingCertificateChainFile = layout.buildDirectory.file("tmp/signing/certificate-chain.pem")
+val signingFilesDirectory = layout.buildDirectory.dir("tmp/signing")
 
 val materializeSigningFiles by tasks.registering(MaterializeSigningFilesTask::class) {
     privateKey.set(providers.environmentVariable("PRIVATE_KEY"))
@@ -91,12 +93,22 @@ val materializeSigningFiles by tasks.registering(MaterializeSigningFilesTask::cl
     outputs.upToDateWhen { false }
 }
 
+val cleanSigningFiles by tasks.registering(Delete::class) {
+    delete(signingFilesDirectory)
+}
+
 tasks.named("signPlugin") {
     dependsOn(materializeSigningFiles)
+    finalizedBy(cleanSigningFiles)
 }
 
 tasks.named("verifyPluginSignature") {
     dependsOn(tasks.named("signPlugin"))
+    finalizedBy(cleanSigningFiles)
+}
+
+cleanSigningFiles {
+    mustRunAfter(tasks.named("verifyPluginSignature"))
 }
 
 kotlin {
