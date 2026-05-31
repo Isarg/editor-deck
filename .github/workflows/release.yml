@@ -12,6 +12,7 @@ jobs:
   release:
     name: Package release
     runs-on: ubuntu-latest
+    environment: publishing
     env:
       PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
 
