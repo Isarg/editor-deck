@@ -6,6 +6,12 @@
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-31
+### Changed
+- 开启 JVM default no-compatibility 模式，移除 Marketplace 检测到的 ToolWindowFactory 默认方法兼容 stub 警告。
+- 将内部 ToolWindowManagerListener 状态变更回调替换为公开的状态变更重载。
+- 将已废弃的 Maven POM 选择对话框替换为 popup 选择器。
+
 ## [0.1.1] - 2026-05-31
 ### Changed
 - 新增 IntelliJ Platform 插件签名和发布配置，用于生成已签名的发布包。

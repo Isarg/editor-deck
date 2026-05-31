@@ -113,6 +113,9 @@ cleanSigningFiles {
 
 kotlin {
     jvmToolchain(21)
+    compilerOptions {
+        freeCompilerArgs.add("-jvm-default=no-compatibility")
+    }
 }
 
 intellijPlatform {

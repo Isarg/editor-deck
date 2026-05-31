@@ -17,11 +17,13 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.psi.PsiElement
+import com.intellij.ui.SimpleListCellRenderer
 
 /**
  * Base action for Editor Deck features that must keep working during indexing.
@@ -109,16 +111,14 @@ class OpenMavenPomAction : OpenEditorsAction(EditorDeckBundle.message("action.op
     }
 
     private fun chooseAndOpen(project: Project, result: PomResolution.Multiple) {
-        val labels = result.locations.map { it.label() }.toTypedArray()
-        val choice = Messages.showChooseDialog(
-            project,
-            EditorDeckBundle.message("dialog.open.maven.pom.multiple.message", result.checkedDirectory),
-            EditorDeckBundle.message("dialog.open.maven.pom.missing.title"),
-            Messages.getQuestionIcon(),
-            labels,
-            labels.first(),
-        )
-        if (choice >= 0) openPom(project, result.locations[choice])
+        val choices = result.locations.map { PomChoice(it.label(), it) }
+        JBPopupFactory.getInstance()
+            .createPopupChooserBuilder(choices)
+            .setTitle(EditorDeckBundle.message("dialog.open.maven.pom.multiple.message", result.checkedDirectory))
+            .setRenderer(SimpleListCellRenderer.create("") { choice: PomChoice -> choice.label })
+            .setItemChosenCallback { choice -> openPom(project, choice.location) }
+            .createPopup()
+            .showCenteredInCurrentWindow(project)
     }
 
     private fun notifyMissingPom(project: Project, message: String) {
@@ -134,3 +134,8 @@ private fun PomLocation.label(): String =
         is PomLocation.LocalPath -> path.fileName.toString()
         is PomLocation.JarEntry -> "${jarPath.fileName}!/$entryPath"
     }
+
+private data class PomChoice(
+    val label: String,
+    val location: PomLocation,
+)

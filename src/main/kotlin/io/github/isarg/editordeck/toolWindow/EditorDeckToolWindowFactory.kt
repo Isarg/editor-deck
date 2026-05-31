@@ -30,7 +30,6 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
-import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.ide.CopyPasteManager
@@ -456,27 +455,25 @@ private class EditorDeckToolWindowPanel(
             .subscribe(ToolWindowManagerListener.TOPIC, object : ToolWindowManagerListener {
                 override fun stateChanged(
                     toolWindowManager: ToolWindowManager,
-                    changedToolWindow: ToolWindow,
                     changeType: ToolWindowManagerListener.ToolWindowManagerEventType,
                 ) {
-                    if (changedToolWindow.id == toolWindow.id) {
+                    val activeToolWindowId = toolWindowManager.activeToolWindowId
+                    if (activeToolWindowId == toolWindow.id) {
                         if (
                             changeType in TOOL_WINDOW_SWITCH_EVENTS &&
-                            toolWindowManager.activeToolWindowId == toolWindow.id
+                            activeToolWindowId == toolWindow.id
                         ) {
                             SwingUtilities.invokeLater { syncExpandedStateWithOuterWidth() }
                         }
                         return
                     }
-                    if (changedToolWindow.id == toolWindow.id || changedToolWindow.anchor != toolWindow.anchor) {
-                        return
-                    }
+                    val activeToolWindow = activeToolWindowId?.let { toolWindowManager.getToolWindow(it) } ?: return
                     if (
                         editorDeckShouldRestorePeerWidth(autoCollapseEnabled, manualWidthCollapsed) &&
                         changeType in TOOL_WINDOW_SWITCH_EVENTS &&
-                        toolWindowManager.activeToolWindowId != toolWindow.id
+                        activeToolWindow.anchor == toolWindow.anchor
                     ) {
-                        SwingUtilities.invokeLater { scheduleRestoreToolWindowWidth(changedToolWindow) }
+                        SwingUtilities.invokeLater { scheduleRestoreToolWindowWidth(activeToolWindow) }
                     }
                 }
 
@@ -1932,8 +1929,8 @@ private class EditorDeckToolWindowPanel(
         private const val VERTICAL_CONTENT_ID = "editor-deck-vertical-content"
         private val GROUP_CONTENT_ID_KEY = Key.create<String>("editorDeckGroupContentId")
         private val TOOL_WINDOW_SWITCH_EVENTS = setOf(
-            ToolWindowManagerEventType.ActivateToolWindow,
-            ToolWindowManagerEventType.ShowToolWindow,
+            ToolWindowManagerListener.ToolWindowManagerEventType.ActivateToolWindow,
+            ToolWindowManagerListener.ToolWindowManagerEventType.ShowToolWindow,
         )
     }
 }

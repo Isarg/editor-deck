@@ -6,6 +6,12 @@
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-31
+### Changed
+- Remove Marketplace verifier warnings for generated ToolWindowFactory default methods by enabling JVM default no-compatibility mode.
+- Replace internal ToolWindowManagerListener state change callback usage with the public state change overload.
+- Replace deprecated Maven POM chooser dialog with a popup chooser.
+
 ## [0.1.1] - 2026-05-31
 ### Changed
 - Add IntelliJ Platform plugin signing and publishing configuration for signed release builds.
