@@ -1,4 +1,12 @@
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
+import java.util.Base64
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -30,8 +38,61 @@ dependencies {
     }
 }
 
+abstract class MaterializeSigningFilesTask : DefaultTask() {
+    @get:Internal
+    abstract val privateKey: Property<String>
+
+    @get:Internal
+    abstract val certificateChain: Property<String>
+
+    @get:OutputFile
+    abstract val privateKeyFile: RegularFileProperty
+
+    @get:OutputFile
+    abstract val certificateChainFile: RegularFileProperty
+
+    @TaskAction
+    fun materialize() {
+        privateKeyFile.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText(decodeSigningValue(privateKey.orNull ?: throw GradleException("PRIVATE_KEY is required for plugin signing.")))
+        }
+        certificateChainFile.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText(
+                decodeSigningValue(
+                    certificateChain.orNull ?: throw GradleException("CERTIFICATE_CHAIN is required for plugin signing."),
+                ),
+            )
+        }
+    }
+
+    private fun decodeSigningValue(value: String): String {
+        val trimmed = value.trim()
+        if (trimmed.startsWith("-----BEGIN")) return value
+        return runCatching {
+            String(Base64.getDecoder().decode(trimmed), Charsets.UTF_8)
+        }.getOrElse { value }
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
+}
+
+val signingPrivateKeyFile = layout.buildDirectory.file("tmp/signing/private-key.pem")
+val signingCertificateChainFile = layout.buildDirectory.file("tmp/signing/certificate-chain.pem")
+
+val materializeSigningFiles by tasks.registering(MaterializeSigningFilesTask::class) {
+    privateKey.set(providers.environmentVariable("PRIVATE_KEY"))
+    certificateChain.set(providers.environmentVariable("CERTIFICATE_CHAIN"))
+    privateKeyFile.set(signingPrivateKeyFile)
+    certificateChainFile.set(signingCertificateChainFile)
+    outputs.upToDateWhen { false }
+}
+
+tasks.named("signPlugin") {
+    dependsOn(materializeSigningFiles)
 }
 
 tasks.named("verifyPluginSignature") {
@@ -48,8 +109,8 @@ intellijPlatform {
     buildSearchableOptions = false
 
     signing {
-        certificateChain.set(providers.environmentVariable("CERTIFICATE_CHAIN"))
-        privateKey.set(providers.environmentVariable("PRIVATE_KEY"))
+        certificateChainFile.set(signingCertificateChainFile)
+        privateKeyFile.set(signingPrivateKeyFile)
         password.set(providers.environmentVariable("PRIVATE_KEY_PASSWORD"))
     }
 
