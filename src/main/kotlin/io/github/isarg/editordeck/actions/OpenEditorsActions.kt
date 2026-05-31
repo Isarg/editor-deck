@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.ui.SimpleListCellRenderer
+import javax.swing.JList
 
 /**
  * Base action for Editor Deck features that must keep working during indexing.
@@ -115,7 +116,17 @@ class OpenMavenPomAction : OpenEditorsAction(EditorDeckBundle.message("action.op
         JBPopupFactory.getInstance()
             .createPopupChooserBuilder(choices)
             .setTitle(EditorDeckBundle.message("dialog.open.maven.pom.multiple.message", result.checkedDirectory))
-            .setRenderer(SimpleListCellRenderer.create("") { choice: PomChoice -> choice.label })
+            .setRenderer(object : SimpleListCellRenderer<PomChoice>() {
+                override fun customize(
+                    list: JList<out PomChoice>,
+                    value: PomChoice?,
+                    index: Int,
+                    selected: Boolean,
+                    hasFocus: Boolean,
+                ) {
+                    text = value?.label.orEmpty()
+                }
+            })
             .setItemChosenCallback { choice -> openPom(project, choice.location) }
             .createPopup()
             .showCenteredInCurrentWindow(project)

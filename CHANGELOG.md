@@ -6,6 +6,11 @@
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-31
+### Changed
+- Disable automatic Build workflow triggers while Marketplace publishing is handled by the Release workflow.
+- Replace scheduled-for-removal SimpleListCellRenderer factory usage with a direct renderer implementation.
+
 ## [0.1.2] - 2026-05-31
 ### Changed
 - Remove Marketplace verifier warnings for generated ToolWindowFactory default methods by enabling JVM default no-compatibility mode.

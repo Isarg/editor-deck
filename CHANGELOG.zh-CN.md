@@ -6,6 +6,11 @@
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-31
+### Changed
+- 暂停 Build workflow 的自动触发，Marketplace 发布暂由 Release workflow 处理。
+- 将计划移除的 SimpleListCellRenderer 工厂方法替换为直接 renderer 实现。
+
 ## [0.1.2] - 2026-05-31
 ### Changed
 - 开启 JVM default no-compatibility 模式，移除 Marketplace 检测到的 ToolWindowFactory 默认方法兼容 stub 警告。
