@@ -34,6 +34,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.named("verifyPluginSignature") {
+    dependsOn(tasks.named("signPlugin"))
+}
+
 kotlin {
     jvmToolchain(21)
 }
