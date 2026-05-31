@@ -1,7 +1,11 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# editor-deck Changelog
+# Editor Deck Changelog
+
+[简体中文](CHANGELOG.zh-CN.md)
 
 ## [Unreleased]
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+- Migrate Editor Deck MVP into the IntelliJ Platform Plugin Template project layout.
+- Add the Editor Deck tool window with grouped open editor navigation.
+- Add dependency JAR/class `Open Maven POM` support for embedded POMs, Maven local repositories, and Gradle caches.

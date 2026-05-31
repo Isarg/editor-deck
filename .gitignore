@@ -1,6 +1,7 @@
 .DS_Store
-.gradle
-.idea
-.intellijPlatform
-.kotlin
-build
+.superpowers/
+.idea/
+.gradle/
+.intellijPlatform/
+.kotlin/
+build/

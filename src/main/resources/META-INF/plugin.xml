@@ -1,19 +1,40 @@
-<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.isarg.editordeck</id>
-    <name>editor-deck</name>
+    <id>io.github.isarg.editordeck</id>
+    <name>%plugin.name</name>
     <vendor>isarg</vendor>
-    <description><![CDATA[
-        <p><b>editor-deck</b> is a repository that provides a pure template to make it easier to create a new plugin project.</p>
-        <p>The main goal of this template is to speed up the setup phase of plugin development for both new and experienced developers by preconfiguring the project scaffold and CI, linking to the proper documentation pages, and keeping everything organized.</p>
-    ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <resource-bundle>messages.EditorDeckBundle</resource-bundle>
+
+    <description>%plugin.description</description>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.isarg.editordeck.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.isarg.editordeck.startup.MyProjectActivity" />
+        <!-- Project services keep editor state and persistent grouping independent from UI lifetimes. -->
+        <projectService serviceImplementation="io.github.isarg.editordeck.settings.OpenEditorsSettingsService"/>
+        <projectService serviceImplementation="io.github.isarg.editordeck.editor.OpenEditorsService"/>
+        <!-- The Project View node was removed; the dedicated Tool Window now owns editor grouping UX. -->
+        <toolWindow id="Editor Deck"
+                    anchor="left"
+                    secondary="true"
+                    icon="AllIcons.Actions.GroupBy"
+                    factoryClass="io.github.isarg.editordeck.toolWindow.EditorDeckToolWindowFactory"/>
+        <notificationGroup id="Editor Deck" displayType="BALLOON"/>
     </extensions>
+
+    <actions>
+        <action id="EditorDeck.OpenMavenPom"
+                class="io.github.isarg.editordeck.actions.OpenMavenPomAction"
+                text="%action.open.maven.pom.text"/>
+
+        <!-- Dependency POM lookup is useful both from Project View dependency nodes and editor context. -->
+        <reference ref="EditorDeck.OpenMavenPom">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </reference>
+
+        <reference ref="EditorDeck.OpenMavenPom">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </reference>
+    </actions>
 </idea-plugin>

@@ -1,45 +1,54 @@
-# editor-deck
+# Editor Deck
 
-![Build](https://github.com/Isarg/editor-deck/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
+[简体中文](README.zh-CN.md)
 
-## Template ToDo list
-- [x] Create a new [IntelliJ Platform Plugin Template][template] project.
-- [ ] Get familiar with the [template documentation][template].
-- [ ] Adjust the [group](./gradle.properties), as well as the [id](./src/main/resources/META-INF/plugin.xml), [name](./src/main/resources/META-INF/plugin.xml), and [sources package](./src/main/kotlin).
-- [ ] Adjust the plugin [description](./src/main/resources/META-INF/plugin.xml) (see [Tips][docs:plugin-description]) and this README to describe what your plugin does.
-- [ ] Review the [Legal Agreements](https://plugins.jetbrains.com/docs/marketplace/legal-agreements.html?from=IJPluginTemplate).
-- [ ] [Publish a plugin manually](https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate) for the first time.
-- [ ] Set the `MARKETPLACE_ID` in the above README badges. You can obtain it once the plugin is published to JetBrains Marketplace.
-- [ ] Set the [Plugin Signing](https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate) related [secrets](https://github.com/JetBrains/intellij-platform-plugin-template#environment-variables).
-- [ ] Set the [Deployment Token](https://plugins.jetbrains.com/docs/marketplace/plugin-upload.html?from=IJPluginTemplate).
-- [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
+Editor Deck is an IntelliJ Platform plugin that adds a compact, groupable open-editor deck to the IDE, plus quick access to dependency POM files from JARs and classes.
 
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+The repository is based on the IntelliJ Platform Plugin Template and keeps the template-style Gradle setup, resource bundle internationalization, changelog support, and GitHub-ready project layout.
 
-## Installation
+## Features
 
-- Using the IDE built-in plugin system:
+- Dedicated **Editor Deck** tool window for open files.
+- Vertical group mode with collapsible groups, manual group height resizing, drag sorting, and a narrow icon-only mode.
+- Horizontal group mode backed by native IntelliJ tool window content tabs and overflow handling.
+- File rows with close buttons, pin state, preview-tab styling, multi-select actions, and drag-and-drop movement between groups.
+- Group actions for creating, renaming, dissolving, closing, sorting, and moving groups.
+- `Open Maven POM` action for dependency JARs and classes, with support for JAR-embedded POM files, Maven local repositories, and Gradle cache layouts.
+- Project-level persistence for group order, group sizes, collapsed state, pin state, selected horizontal group, and display preferences.
 
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "editor-deck"</kbd> >
-  <kbd>Install</kbd>
+## Build
 
-- Using JetBrains Marketplace:
+This project keeps the local development setup used while building the MVP:
 
-  Go to [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID) and install it by clicking the <kbd>Install to ...</kbd> button in case your IDE is running.
+- Gradle Wrapper downloads Gradle from the Tencent Cloud mirror.
+- Maven dependencies resolve through the Aliyun Maven mirror first.
+- The project keeps the template's newer Gradle wrapper and IntelliJ Platform Gradle Plugin setup.
+- Local verification can use the workspace init script:
 
-  You can also download the [latest release](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID/versions) from JetBrains Marketplace and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+```powershell
+.\gradlew.bat -I D:\repo\gradle\init.gradle test verifyPluginProjectConfiguration buildPlugin --no-daemon
+```
 
-- Manually:
+The plugin targets IntelliJ Platform `2025.1+` and uses Kotlin with Java 21.
 
-  Download the [latest release](https://github.com/Isarg/editor-deck/releases/latest) and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+## References
 
+Editor Deck was implemented with reference to:
 
----
-Plugin based on the [IntelliJ Platform Plugin Template][template].
+- [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template), used as the GitHub-ready plugin project scaffold.
+- [IntelliJ Community](https://github.com/JetBrains/intellij-community), especially the Project tool window, tool window content UI, editor tab, and Swing interaction patterns.
+- Visual ideas from VS Code's open editors list and Microsoft Edge-style vertical tabs.
 
-[template]: https://github.com/JetBrains/intellij-platform-plugin-template
-[docs:plugin-description]: https://plugins.jetbrains.com/docs/intellij/plugin-user-experience.html#plugin-description-and-presentation
+## Collaboration
+
+This plugin was built collaboratively by Isarg and Codex.
+
+Isarg drove the product direction: requirements, UX feedback, edge-case discovery, manual testing, and acceptance checks. Codex handled implementation, refactoring, test coverage, Gradle verification, and iterative fixes based on that feedback.
+
+## Status
+
+The current version is an MVP focused on the Editor Deck tool window and dependency POM lookup. Marketplace publishing metadata and release automation can be refined after manual review.
+
+## License
+
+Editor Deck is licensed under the [MIT License](LICENSE).
